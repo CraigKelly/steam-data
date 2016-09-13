@@ -5,11 +5,11 @@ with Python.
 
 You should have Python 3 and `make` installed to use the `Makefile`
 
-NOTE that `make clean` will delete the Python virtual env and all previous
-data, so be sure that's what you want.
+Please be careful with `make clean` - it will delete the Python virtual env
+and all previous data, so be sure that's what you want.
 
 ## In Progress
 
 TODO: add app id and name from csv file to record - including for success=false
-TODO: games.py should pre-scan games.json, only do missing appid's, and then append
+TODO: games.py should pre-scan games.json, find missing appid's, and then append
 TODO: above todo means our makefile would be incomplete
