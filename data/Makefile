@@ -7,8 +7,8 @@ VENV=$(BASEDIR)/venv
 IDLIST=idlist.csv
 GAMEJSON=games.json
 
-games: $(GAMEJSON)
-$(GAMEJSON): $(VENV) $(IDLIST)
+games: $(VENV) $(IDLIST)
+	@echo "Getting ID's not in games.json"
 	$(PYTOOL) games.py
 
 idlist: $(IDLIST)
