@@ -53,8 +53,8 @@ def main():
     log.info("Default parameters: %s", repr(defaults))
 
     URL = "http://store.steampowered.com/api/appdetails/"
-    LIMIT = 190
-    WAIT_TIME = 5 * 60  # 5 minutes
+    LIMIT = 150
+    WAIT_TIME = (5 * 60) + 10  # 5 minutes plus a cushion
 
     log.info("Getting previous results from games.json")
     previos_ids = previous_results()
