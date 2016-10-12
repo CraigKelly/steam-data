@@ -7,8 +7,15 @@ def read_games():
     """Simple generator to yield everything in games.json as Python dicts."""
     with open("games.json") as f:
         for line in f:
-            if line:
-                yield json.loads(line)
+            if not line:
+                continue
+            rec = json.loads(line)
+            if not rec.get('success', None):
+                continue
+            if 'game' != rec.get('data', {}).get('type', ''):
+                continue
+
+            yield rec
 
 
 def main():
@@ -17,13 +24,13 @@ def main():
 
     for game in read_games():
         total += 1
-        s = game.get("success", None)
-        if s is None:
-            error += 1  # success isn't even in the stupid object
-        elif s:
-            good += 1   # success is a boolean, so we got our results
+        d = game.get("data", None)
+        if d is None:
+            error += 1
+        elif d.get('type', None):
+            good += 1
         else:
-            bad += 1    # success == False
+            bad += 1
 
     print("Good Records Seen:  %8d" % good)
     print("Bad Records Seen:   %8d" % bad)
