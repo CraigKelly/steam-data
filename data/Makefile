@@ -1,9 +1,8 @@
 PY=python3
 
-BASEDIR=$(CURDIR)
 SETUP=$(CURDIR)/setup
 PYTOOL=$(CURDIR)/pytool
-VENV=$(BASEDIR)/venv
+VENV=$(CURDIR)/venv
 IDLIST=idlist.csv
 GAMEJSON=games.json
 TARBALL=steam-data.tar.gz
@@ -28,7 +27,7 @@ clean:
 tarball: $(TARBALL)
 $(TARBALL): $(IDLIST) $(GAMEJSON)
 	rm -f $(TARBALL)
-	tar -zcf $(TARBALL) $(IDLIST) $(GAMEJSON)
+	tar -zvcf $(TARBALL) $(IDLIST) $(GAMEJSON)
 	@echo "Tarball created - you should put it somewhere"
 
 .PHONY: clean setup idlist games
