@@ -60,6 +60,15 @@ COLUMNS = [
 
     "RequiredAge",
 
+    # Achivements
+    "AchievementCount", "AchievementHighlightedCount",
+
+    # Categories
+    "CategorySinglePlayer", "CategoryMultiplayer", "CategoryCoop", "CategoryMMO",
+    "CategoryInAppPurchase",
+    "CategoryIncludeSrcSDK", "CategoryIncludeLevelEditor",
+    "CategoryVRSupport",
+
     # Text fields (potentially long)
     "ResponseName",
     "AboutText",
@@ -79,6 +88,14 @@ COLUMNS = [
 def record(raw):
     """Convert the raw JSON dict to our CSV record."""
     data = raw["data"]
+
+    # Categories
+    cats = set()
+    for d in data.get('categories', []):
+        c = d.get('description', '').strip().lower()
+        if c:
+            cats.add(c)
+
     return {
         "QueryID": raw["query_appid"],
 
@@ -100,11 +117,28 @@ def record(raw):
         # Numeric fields
         "ResponseID": num(data.get('steam_appid', None)),
         "RequiredAge": num(data.get('required_age', None)),
+
+        # Achivements
+        "AchievementCount": num(data.get('achievements', {}).get('total', 0)),
+        "AchievementHighlightedCount": len(data.get('achievements', {}).get('highlighted', [])),
+
+        # Categories
+        "CategoryMultiplayer": any(i in cats for i in [
+            "cross-platform multiplayer", "local multi-player", "multi-player",
+            "online multi-player", "shared/split screen"
+        ]),
+        "CategoryCoop": any(i in cats for i in [
+            "co-op", "local co-op", "online co-op"
+        ]),
+        "CategoryInAppPurchase": "in-app purchases" in cats,
+        "CategoryIncludeSrcSDK": "includes source sdk" in cats,
+        "CategoryIncludeLevelEditor": "includes level editor" in cats,
+        "CategoryMMO": "mmo" in cats,
+        "CategorySinglePlayer": "single-player" in cats,
+        "CategoryVRSupport": "vr support" in cats,
     }
 
     """ TODO
-    achievements	6615	1	Get ‘total’ as int from dict, get len(‘highlighted’) as int from dict
-    categories	11813	1	List of dict’s – boolean if descrip avail for: see NB
     controller_support	3391	1	either ‘full’ or missing – boolean
     demos	1134	1	List – use count (DemoCount)
     developers	11402	1	List of strings – 3 field: MainDev, OtherDevs, DevCount = d[0], d[1:], len(d)
