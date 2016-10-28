@@ -51,26 +51,75 @@ def num(n):
         return ""
 
 
+def numf(f):
+    """Return interpreted float - unlike num default is 0.0."""
+    f = str(f).strip() if f else None
+    if not f:
+        return 0.0
+    try:
+        return float(f)
+    except:
+        return 0.0
+
+
+def txt_count(lst):
+    """Return count of unique, non-empty strings in the list/iterable."""
+    uniq = set([str(i).strip().lower() for i in lst])
+    return len(uniq - set(['']))
+
+
 # List of columns in the order we want them in the file
 # If you change the function `record`, you probably want to change
 # this list
-# TODO: make sure matches record() func below
 COLUMNS = [
-    "QueryID", "ResponseName", "QueryName", "ResponseName",
+    # Identifying fields
+    "QueryID", "ResponseID", "QueryName", "ResponseName", "ReleaseDate",
 
+    # Numerics
     "RequiredAge",
+    "DemoCount",
+    "DeveloperCount",
+    "DLCCount",
+    "Metacritic",
+    "MovieCount",
+    "PackageCount",
+    "RecommendationCount",
+    "PublisherCount",
+    "ScreenshotCount",
 
-    # Achivements
+    # Achievements (numeric)
     "AchievementCount", "AchievementHighlightedCount",
 
-    # Categories
+    # Bools
+    "ControllerSupport",
+    "IsFree",
+    "FreeVerAvail", "PurchaseAvail", "SubscriptionAvail",
+    "PlatformWindows", "PlatformLinux", "PlatformMac",
+
+    # Requirements (bool)
+    "PCReqsHaveMin", "PCReqsHaveRec",
+    "LinuxReqsHaveMin", "LinuxReqsHaveRec",
+    "MacReqsHaveMin", "MacReqsHaveRec",
+
+    # Categories (bool)
     "CategorySinglePlayer", "CategoryMultiplayer", "CategoryCoop", "CategoryMMO",
     "CategoryInAppPurchase",
     "CategoryIncludeSrcSDK", "CategoryIncludeLevelEditor",
     "CategoryVRSupport",
 
+    # Genres (bool)
+    "GenreIsNonGame",
+    "GenreIsIndie", "GenreIsAction", "GenreIsAdventure", "GenreIsCasual",
+    "GenreIsStrategy", "GenreIsRPG", "GenreIsSimulation", "GenreIsEarlyAccess",
+    "GenreIsFreeToPlay", "GenreIsSports", "GenreIsRacing",
+    "GenreIsMassivelyMultiplayer",
+
+    # Pricing
+    "PriceCurrency", "PriceInitial", "PriceFinal",
+
     # Text fields (potentially long)
-    "ResponseName",
+    "SupportEmail",
+    "SupportURL",
     "AboutText",
     "Background",
     "ShortDescrip",
@@ -96,11 +145,45 @@ def record(raw):
         if c:
             cats.add(c)
 
+    # Genres
+    genres = set()
+    non_game_genres = set([
+        "utilities", "design & illustration", "animation & modeling",
+        "software training", "education", "audio production",
+        "video production", "web publishing", "photo editing", "accounting",
+    ])
+    for d in data.get('genres', []):
+        g = d.get('description', '').strip().lower()
+        if g:
+            if g in non_game_genres:
+                genres.add('nongame')
+            else:
+                genres.add(g)
+
+    # Package groups
+    pgs = data.get("package_groups", [])
+    pg_free, pg_purchase, pg_subscript = False, False, False
+    for pg in pgs:
+        if pg.get('is_recurring_subscription', '') == 'true':
+            pg_subscript = True
+        for s in pg.get('subs', list()):
+            if s.get('is_free_license', None):
+                pg_free = True
+            elif s.get('price_in_cents_with_discount', 0) > 0:
+                pg_purchase = True
+
+    # Requirements
+    # The extra "or {}" check is because some empty requirements get interpreted
+    # as an empty list...
+    linux_rec = data.get('linux_requirements', {}) or {}
+    mac_req = data.get('mac_requirements', {}) or {}
+    pc_req = data.get('pc_requirements', {}) or {}
+
     return {
-        "QueryID": raw["query_appid"],
+        "QueryID": raw['query_appid'],
 
         # Text fields
-        "QueryName": raw["query_appname"],
+        "QueryName": raw['query_appname'],
         "ResponseName": txt(data.get('name', '')),
         "AboutText": txt(data.get('about_the_game', '')),
         "Background": txt(data.get('background', '')),
@@ -113,16 +196,38 @@ def record(raw):
         "Reviews": txt(data.get('reviews', '')),
         "SupportedLanguages": txt(data.get('supported_languages', '')),
         "Website": txt(data.get('website', '')),
+        "ReleaseDate": txt(data.get('release_date', {}).get('date', '')),
+        "SupportEmail": txt(data.get('support_info', {}).get('email', '')),
+        "SupportURL": txt(data.get('support_info', {}).get('url', '')),
 
         # Numeric fields
         "ResponseID": num(data.get('steam_appid', None)),
         "RequiredAge": num(data.get('required_age', None)),
+        "DemoCount": txt_count(data.get('demos', [])),
+        "DeveloperCount": txt_count(data.get('developers', [])),
+        "DLCCount": txt_count(data.get('dlc', [])),
+        "Metacritic": num(data.get('metacritic', {}).get('score', '')),
+        "MovieCount": txt_count([num(d.get('id', '')) for d in data.get('movies', [])]),
+        "PackageCount": txt_count(data.get('packages', [])),
+        "PublisherCount": txt_count(data.get('publishers', [])),
+        "RecommendationCount": num(data.get('recommendations', {}).get('total', 0)),
+        "ScreenshotCount": len(data.get('screenshots', [])),
 
         # Achivements
         "AchievementCount": num(data.get('achievements', {}).get('total', 0)),
-        "AchievementHighlightedCount": len(data.get('achievements', {}).get('highlighted', [])),
+        "AchievementHighlightedCount": txt_count(data.get('achievements', {}).get('highlighted', [])),
 
-        # Categories
+        # "Easy" Boolean fields
+        "ControllerSupport": data.get("controller_support", "").strip().lower() == "full",
+        "IsFree": data.get("is_free", False),
+        "FreeVerAvail": pg_free,
+        "PurchaseAvail": pg_purchase,
+        "SubscriptionAvail": pg_subscript,
+        "PlatformWindows": data.get("platforms", {}).get("windows", False),
+        "PlatformLinux": data.get("platforms", {}).get("linux", False),
+        "PlatformMac": data.get("platforms", {}).get("mac", False),
+
+        # Categories (Bool)
         "CategoryMultiplayer": any(i in cats for i in [
             "cross-platform multiplayer", "local multi-player", "multi-player",
             "online multi-player", "shared/split screen"
@@ -136,35 +241,60 @@ def record(raw):
         "CategoryMMO": "mmo" in cats,
         "CategorySinglePlayer": "single-player" in cats,
         "CategoryVRSupport": "vr support" in cats,
+
+        # Genres (Bool)
+        "GenreIsNonGame": "nongame" in genres,
+        "GenreIsIndie": "indie" in genres,
+        "GenreIsAction": "action" in genres,
+        "GenreIsAdventure": "adventure" in genres,
+        "GenreIsCasual": "casual" in genres,
+        "GenreIsStrategy": "strategy" in genres,
+        "GenreIsRPG": "rpg" in genres,
+        "GenreIsSimulation": "simulation" in genres,
+        "GenreIsEarlyAccess": "early access" in genres,
+        "GenreIsFreeToPlay": "free to play" in genres,
+        "GenreIsSports": "sports" in genres,
+        "GenreIsRacing": "racing" in genres,
+        "GenreIsMassivelyMultiplayer": "massively multiplayer" in genres,
+
+        # Requirements (Bool)
+        "LinuxReqsHaveMin": True if linux_rec.get('minimum', '') else False,
+        "LinuxReqsHaveRec": True if linux_rec.get('recommended', '') else False,
+        "MacReqsHaveMin": True if mac_req.get('minimum', '') else False,
+        "MacReqsHaveRec": True if mac_req.get('recommended', '') else False,
+        "PCReqsHaveMin": True if pc_req.get('minimum', '') else False,
+        "PCReqsHaveRec": True if pc_req.get('recommended', '') else False,
+
+        # Pricing (prices are in pennies and we convert to dollars)
+        "PriceCurrency": txt(data.get("price_overview", {}).get("currency", "")),
+        "PriceInitial": numf(data.get("price_overview", {}).get("initial", 0.0)) / 100.0,
+        "PriceFinal": numf(data.get("price_overview", {}).get("final", 0.0)) / 100.0,
     }
 
-    """ TODO
-    controller_support	3391	1	either ‘full’ or missing – boolean
-    demos	1134	1	List – use count (DemoCount)
-    developers	11402	1	List of strings – 3 field: MainDev, OtherDevs, DevCount = d[0], d[1:], len(d)
-    dlc	2076	1	List of ID’s – use count
-    genres	11294	1	List of dict’s – use description to discretize: see notebook
-    is_free	12037	2	boolean
-    linux_requirements	12037	2	Requirements – see nb for description
-    mac_requirements	12037	2	Requirements – see nb for description
-    metacritic	2263	1	Dict – extract key ‘score’ as int – blank on missing/failure
-    movies	10429	1	Turn list of dict’s into count
-    package_groups	12037	1	3 bool columns – see code in nb
-    packages	10193	1	PackageCount – from len of list
-    pc_requirements	12037	2	Requirements – see nb for description
-    platforms	12037	1	3 bool columns from dict: Windows, Linux, Mac – keys are (“windows”, “linux”, “mac”)
-    price_overview	10008	1	Dict – get PriceCurrency, PriceInitial, PriceFinal from keys “currency”, “initial”, “final”
-    publishers	12037	1	List – make PublishersCount, but drop blanks and uniq-ify
-    recommendations	4832	1	Use key ‘total’ to get RecommendationCount
-    release_date	12037	1	ReleaseDate using key “date”
-    screenshots	11336	1	ScreenshotCount is len of list
-    support_info	12037	1	SupportEmail and SupportURL from keys “email” and “url”
-    type	12037	1	ignore
-    """
+
+def sanity_check():
+    """Make sure COLUMNS and a default record match up."""
+    blank = record({'query_appid': '', 'query_appname': '', 'data': {}})
+    keys = set(blank.keys())
+    cols = set(COLUMNS)
+    if len(cols) != len(keys):
+        print("Column mismatch: expected %d but found %d in blank record" % (
+            len(cols), len(keys)
+        ))
+        print("In COLUMNS, but not in rec: %s" % repr(cols-keys))
+        print("In rec, but not in COLUMNS: %s" % repr(keys-cols))
+        raise Exception("Failed column check")
+    if len(COLUMNS) != len(cols):
+        print("Check failed: duplicate columns!")
+        from collections import Counter
+        print([k for k, c in Counter(COLUMNS).items() if c > 1])
+        raise Exception("Duplicate columns found")
 
 
 def main():
     """Entry point."""
+    sanity_check()
+
     print("Creating games-features.csv")
     with open("games-features.csv", "w") as basefile:
         writer = csv.writer(basefile)
