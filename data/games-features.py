@@ -28,7 +28,7 @@ def game_reader():
 html_tags = re.compile('<[^<]+?>')
 
 
-def txt(t):
+def txt(t, defval=' '):
     """Return filtered text."""
     # Ascii-compatible UTF8 string
     s = unicodedata.normalize('NFKD', str(t)).encode('ascii', 'ignore').decode('utf-8')
@@ -37,29 +37,31 @@ def txt(t):
     # Just kill any troublesome characters
     for c in ",'\"\r\n\t":
         s = s.replace(c, '')
-    return s.strip()
+    return s.strip() or defval
 
 
-def num(n):
+def num(s, defval=0):
     """Return correctly interpreted number (current assume ints)."""
-    n = str(n).strip() if n else None
+    n = str(s).strip() if s else None
     if not n:
-        return ""
+        return defval
     try:
         return int(n)
     except:
-        return ""
+        print("Could not int(%s)" % (n,))
+        return defval
 
 
-def numf(f):
+def numf(s, defval=0.0):
     """Return interpreted float - unlike num default is 0.0."""
-    f = str(f).strip() if f else None
+    f = str(s).strip() if s else None
     if not f:
-        return 0.0
+        return defval
     try:
         return float(f)
     except:
-        return 0.0
+        print("Could not float(%s)" % (f,))
+        return defval
 
 
 def txt_count(lst):
