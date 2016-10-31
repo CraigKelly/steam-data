@@ -7,7 +7,9 @@
 import csv
 import json
 import re
-import unicodedata
+import html
+
+from unidecode import unidecode
 
 
 def game_reader():
@@ -31,10 +33,15 @@ html_tags = re.compile('<[^<]+?>')
 def txt(t, defval=' '):
     """Return filtered text."""
     # Ascii-compatible UTF8 string
-    s = unicodedata.normalize('NFKD', str(t)).encode('ascii', 'ignore').decode('utf-8')
+    s = unidecode(str(t)).strip()
+    # s = unicodedata.normalize('NFKD', str(t)).encode('ascii', 'ignore').decode('utf-8')
     # No html tags
-    s = html_tags.sub('', s).strip()
-    # Just kill any troublesome characters
+    s = html_tags.sub('', s)
+    # No unescape any html entities (like &gt; or &quot;)
+    s = html.unescape(s)
+    # And now we need to kill any HTML tags we re-introduced
+    s = html_tags.sub('', s)
+    # And finally kill any troublesome characters
     for c in ",'\"\r\n\t":
         s = s.replace(c, '')
     return s.strip() or defval
@@ -133,6 +140,12 @@ COLUMNS = [
     "Reviews",
     "SupportedLanguages",
     "Website",
+    "PCMinReqsText",
+    "PCRecReqsText",
+    "LinuxMinReqsText",
+    "LinuxRecReqsText",
+    "MacMinReqsText",
+    "MacRecReqsText",
 ]
 
 
@@ -177,7 +190,7 @@ def record(raw):
     # Requirements
     # The extra "or {}" check is because some empty requirements get interpreted
     # as an empty list...
-    linux_rec = data.get('linux_requirements', {}) or {}
+    linux_req = data.get('linux_requirements', {}) or {}
     mac_req = data.get('mac_requirements', {}) or {}
     pc_req = data.get('pc_requirements', {}) or {}
 
@@ -213,7 +226,7 @@ def record(raw):
         "PackageCount": txt_count(data.get('packages', [])),
         "PublisherCount": txt_count(data.get('publishers', [])),
         "RecommendationCount": num(data.get('recommendations', {}).get('total', 0)),
-        "ScreenshotCount": len(data.get('screenshots', [])),
+        "ScreenshotCount": txt_count(data.get('screenshots', [])),
 
         # Achivements
         "AchievementCount": num(data.get('achievements', {}).get('total', 0)),
@@ -260,12 +273,20 @@ def record(raw):
         "GenreIsMassivelyMultiplayer": "massively multiplayer" in genres,
 
         # Requirements (Bool)
-        "LinuxReqsHaveMin": True if linux_rec.get('minimum', '') else False,
-        "LinuxReqsHaveRec": True if linux_rec.get('recommended', '') else False,
+        "LinuxReqsHaveMin": True if linux_req.get('minimum', '') else False,
+        "LinuxReqsHaveRec": True if linux_req.get('recommended', '') else False,
         "MacReqsHaveMin": True if mac_req.get('minimum', '') else False,
         "MacReqsHaveRec": True if mac_req.get('recommended', '') else False,
         "PCReqsHaveMin": True if pc_req.get('minimum', '') else False,
         "PCReqsHaveRec": True if pc_req.get('recommended', '') else False,
+
+        # Requirements (Text)
+        "PCMinReqsText": txt(pc_req.get('minimum', '')),
+        "PCRecReqsText": txt(pc_req.get('recommended', '')),
+        "LinuxMinReqsText": txt(linux_req.get('minimum', '')),
+        "LinuxRecReqsText": txt(linux_req.get('recommended', '')),
+        "MacMinReqsText": txt(mac_req.get('minimum', '')),
+        "MacRecReqsText": txt(mac_req.get('recommended', '')),
 
         # Pricing (prices are in pennies and we convert to dollars)
         "PriceCurrency": txt(data.get("price_overview", {}).get("currency", "")),

@@ -117,3 +117,9 @@ unicode. The processing steps are:
 * Reviews - (Textual) `reviews` in JSON
 * SupportedLanguages - (Textual) `supported_languages` in JSON
 * Website - (Textual) `website` in JSON
+* PCMinReqsText - (Textual) text of `pc_requirements.minimum`
+* PCRecReqsText - (Textual) text of `pc_requirements.recommended`
+* LinuxMinReqsText - (Textual) text of `linux_requirements.minimum`
+* LinuxRecReqsText - (Textual) text of `linux_requirements.recommended`
+* MacMinReqsText - (Textual) text of `mac_requirements.minimum`
+* MacRecReqsText - (Textual) text of `mac_requirements.recommended`
