@@ -47,6 +47,7 @@ unicode. The processing steps are:
 * ResponseName - (Text) The name returned in the Steam response (should equal QueryName)
 * ReleaseDate - (Text) Appears to the be the initial release date for the game
 
+
 * RequiredAge - (Integer) list named `required_age` in JSON
 * DemoCount - (TextualCount) list named `demos` in JSON
 * DeveloperCount - (TextualCount) list named `developers` in JSON
@@ -58,8 +59,10 @@ unicode. The processing steps are:
 * PublisherCount  - (TextualCount) list named `publishers` in JSON
 * ScreenshotCount  - (TextualCount) list named `screenshots` in JSON
 
+
 * AchievementCount - (Integer) `achievements.total` in JSON
 * AchievementHighlightedCount - (TextualCount) for `achievements.highlighted` in JSON
+
 
 * ControllerSupport - (Boolean) True if `controller_support` was `full`
 * IsFree - (Boolean) `is_free` in JSON
@@ -70,12 +73,14 @@ unicode. The processing steps are:
 * PlatformLinux - (Boolean) True if `platforms.linux` is True
 * PlatformMac - (Boolean) True if `platforms.mac` is True
 
+
 * PCReqsHaveMin - (Boolean) True if `pc_requirements.minimum` is non-empty string
 * PCReqsHaveRec - (Boolean) True if `pc_requirements.recommended` is non-empty string
 * LinuxReqsHaveMin - (Boolean) True if `linux_requirements.minimum` is non-empty string
 * LinuxReqsHaveRec - (Boolean) True if `linux_requirements.recommended` is non-empty string
 * MacReqsHaveMin - (Boolean) True if `mac_requirements.minimum` is non-empty string
 * MacReqsHaveRec - (Boolean) True if `mac_requirements.recommended` is non-empty string
+
 
 * CategorySinglePlayer - (Boolean) True if for any i, `categories[i].description` is "single-player"
 * CategoryMultiplayer - (Boolean) True if for any i, `categories[i].description` is one of: "cross-platform multiplayer", "local multi-player", "multi-player", "online multi-player", "shared/split screen"
@@ -85,6 +90,7 @@ unicode. The processing steps are:
 * CategoryIncludeSrcSDK - (Boolean) True if for any i, `categories[i].description` is "includes source sdk"
 * CategoryIncludeLevelEditor - (Boolean) True if for any i, `categories[i].description` is "includes level editor"
 * CategoryVRSupport - (Boolean) True if for any i, `categories[i].description` is "vr support"
+
 
 * GenreIsNonGame - (Boolean) True if for any i, `genres[i].description` is one of: "utilities", "design & illustration", "animation & modeling", "software training", "education", "audio production", "video production", "web publishing", "photo editing", "accounting"
 * GenreIsIndie - (Boolean) True if for any i, `genres[i].description` is "indie"
@@ -100,9 +106,17 @@ unicode. The processing steps are:
 * GenreIsRacing - (Boolean) True if for any i, `genres[i].description` is "racing"
 * GenreIsMassivelyMultiplayer - (Boolean) True if for any i, `genres[i].description` is "massively multiplayer"
 
+
 * PriceCurrency - (Text) `price_overview.currency` in JSON
 * PriceInitial - (Float) `price_overview.initial` in JSON, divided by 100.0 to converts cents to currency
 * PriceFinal - (Float) `price_overview.final` in JSON, divided by 100.0 to converts cents to currency
+
+
+* SteamSpyOwners - (steamspy.com) total owners, which includes free weekend trials and other possibly spurious numbers.
+* SteamSpyOwnersVariance - (steamspy.com) total owners, which includes free weekend trials and other possibly spurious numbers. Note that this is not technically variance: according to steamspy.com, "the real number... lies somewhere on... [value +/- variance]"
+* SteamSpyPlayersEstimate - (steamspy.com) best estimate of total number of people who have played the game since March 2009
+* SteamSpyPlayersVariance - (steamspy.com) errors bounds on SteamSpyPlayersEstimate. Note that this is not technically variance: according to steamspy.com, "the real number... lies somewhere on... [value +/- variance]"
+
 
 * SupportEmail - (Textual) `support_info.email` in JSON
 * SupportURL - (Textual) `support_info.url` in JSON

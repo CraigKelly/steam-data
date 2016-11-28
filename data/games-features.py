@@ -1,6 +1,6 @@
 #!/usr/env/bin python
 
-# pylama:ignore=E501
+# pylama:ignore=E501,C901
 
 """Create games-features.csv from games.json."""
 
@@ -96,6 +96,12 @@ COLUMNS = [
     "PublisherCount",
     "ScreenshotCount",
 
+    # Numerics from SteamSpy JSON
+    "SteamSpyOwners",
+    "SteamSpyOwnersVariance",
+    "SteamSpyPlayersEstimate",
+    "SteamSpyPlayersVariance",
+
     # Achievements (numeric)
     "AchievementCount", "AchievementHighlightedCount",
 
@@ -149,6 +155,21 @@ COLUMNS = [
 ]
 
 
+def steam_spy_read(appid, *field_names):
+    """Read the given fields from steam spy JSON."""
+    if not steam_spy_read.steam_spy:
+        with open("steamspy.json") as inp:
+            steam_spy_read.steam_spy = json.load(inp)
+        if not steam_spy_read.steam_spy:
+            raise Exception("Could not read steamspy.json")
+
+    rec = steam_spy_read.steam_spy.get(str(appid), dict())
+    return tuple([num(rec.get(f, 0)) for f in field_names])
+
+
+steam_spy_read.steam_spy = dict()
+
+
 def record(raw):
     """Convert the raw JSON dict to our CSV record."""
     data = raw["data"]
@@ -194,6 +215,15 @@ def record(raw):
     mac_req = data.get('mac_requirements', {}) or {}
     pc_req = data.get('pc_requirements', {}) or {}
 
+    # SteamSpy.com owner/player data
+    ss_owners, ss_owners_var, ss_players, ss_players_var = steam_spy_read(
+        raw['query_appid'],
+        'owners',
+        'owners_variance',
+        'players_forever',
+        'players_forever_variance',
+    )
+
     return {
         "QueryID": raw['query_appid'],
 
@@ -227,6 +257,12 @@ def record(raw):
         "PublisherCount": txt_count(data.get('publishers', [])),
         "RecommendationCount": num(data.get('recommendations', {}).get('total', 0)),
         "ScreenshotCount": txt_count(data.get('screenshots', [])),
+
+        # Steam Spy numeric fields
+        "SteamSpyOwners": ss_owners,
+        "SteamSpyOwnersVariance": ss_owners_var,
+        "SteamSpyPlayersEstimate": ss_players,
+        "SteamSpyPlayersVariance": ss_players_var,
 
         # Achivements
         "AchievementCount": num(data.get('achievements', {}).get('total', 0)),
