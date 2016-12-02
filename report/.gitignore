@@ -2,4 +2,10 @@
 *.fls
 *.log
 *.lof
+*-blx.bib
+*.bbl
+*.blg
+*.run.xml
+
 .sconsign.dblite
+
