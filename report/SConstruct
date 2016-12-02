@@ -1,0 +1,8 @@
+"""comp 7150 project report."""
+
+import os
+
+from SCons.Script import (Environment)
+
+env = Environment(ENV=os.environ)
+pdffile = env.PDF("report.tex")

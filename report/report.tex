@@ -1,0 +1,209 @@
+\documentclass[letterpaper,10pt,twocolumn]{article}
+
+\usepackage[backend=bibtex,style=numeric]{biblatex}
+\bibliography{report}
+
+\usepackage{fullpage}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{enumerate}
+\usepackage{listings}
+\usepackage{algpseudocode}
+\usepackage{changepage}  %%for adjustwidth macro
+\usepackage{verbatim}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{url}
+
+% Cribbed a listing macro that won't split across pages
+\lstnewenvironment{nobreakslisting}[1][]%
+    {\noindent\minipage{\linewidth}\medskip
+        \lstset{basicstyle=\ttfamily\footnotesize,frame=single,#1}}
+    {\endminipage}
+
+\title{COMP 7150 --- Data Science Project Report}
+\author{
+    Hicks, Eric\\
+    \texttt{elhicks@memphis.edu}
+    \and
+    Kelly, Craig\\
+    \texttt{cnkelly@memphis.edu}
+}
+
+\begin{document}
+
+% Force pdflatex to properly use letter as page size (instead
+% of defaulting to A4)
+\special{papersize=8.5in,11in}
+\setlength{\pdfpageheight}{\paperheight}
+\setlength{\pdfpagewidth}{\paperwidth}
+
+\maketitle
+
+\abstract{
+A raw data source was mining for data, which was cleaned and filtered into a
+usable dataset. This dataset was searched for interesting details based upon
+the authors' preconceptions. They were found.
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Introduction}
+
+In this paper, the path and results of the authors' dissection of the Steam
+platform will be detailed. The reason Steam was chosen for this project, was
+due to its large acceptance in the PC space. Steam is a company that sells
+PC, Mac, and Linux games for download over the Internet. With weekly sales,
+daily releases, a managed library, and no computer limit on games, it is the
+largest digital distributor of games and the most widely used. Additionally,
+Steam stores metrics on over a 100 million users on nearly 10,000 games,
+making it a perfect example of a feature rich dataset. However, as Steam has
+no saved repository of data publicly available, one was created for this
+project, hereby called the Steam dataset. \cite{steam}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Steam Dataset}
+
+Although, several external sites keep track of various parts of Steam, none of
+them gathers the data already available by web crawling Steam. Of the few
+sites that record data not saved by Steam such as Rhekua \cite{rhekua}, none
+of them release snapshots of their gathered data. This lead the authors to
+manually mine data from the main Steam site.
+
+TODO: appendix with field listing? or just a link to the repo?
+
+\subsection{Acquisition}
+
+TODO: multiple full pulls from steam and merge with steamspy
+
+\subsection{Cleaning and Formatting}
+
+TODO: reduced to 78 fields
+TODO: explain field removal
+
+\subsection{Caveats}
+
+Some aspects of steam were not able to be captured in the data pulled from
+Steam.  Some are not recorded and others can only be accessed by an
+administrator account.  The number of owners for each game could not be
+acquired, but has been estimated using an outside site \cite{steamspy}.
+Recommendations were collected as a total of reviews and as two separate
+values for positive and negative reviews.  The sentiment of the reviews that
+Steam displays was also not able to be captured.  Steam doesn't store
+historical price data, so sale history and price trends can not be analyzed
+from the data.  These limitations did not stop the authors from gaining
+interesting insight from the data.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Predictions}
+
+As both authors were familiar with Steam before the start of the project, they
+made some predictions of what would be found in the data:
+
+\begin{enumerate}
+    \item SteamOS games available on Steam would be a perfect match to Linux
+    games available.
+
+    \item The most recommended and the highest rated genre is action.
+
+    \item That Metacritic scores are an inverse bell curve when sorted by
+    recommendation, i.e. lower and higher scoring games would have more
+    recommendations that games with a middle score.
+
+    \item That free games get more reviews per game both are rated lower than
+    paid games.
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Testing}
+
+Both authors ran different models on the data independent of each other to
+cover the most ground.  Every feature pair was plotted as a scatter plot to
+gain a basic understanding of feature relations alongside reading through the
+raw data.  From here other options were tried.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Results}
+
+The following are the results of the authors' predictions:
+
+\begin{enumerate}
+    \item It was verified that all SteamOS games are also the entirety of the
+    Linux library on Steam.
+
+    \item The most recommended genre was free to play and not action. The least
+    recommended genre was non-game software.
+
+    \item The highest scoring genre was sports instead of action. The lowest
+    scoring genre was free to play.
+
+    \item Free games do get more recommendations than paid games, they also are
+    rated lower than paid games.
+\end{enumerate}
+
+The above leads to the conclusion that free to play games likely have mostly
+negative reviews. These findings also lead to the idea that free games receive
+mostly negative reviews. Other results pulled from the data not related to the
+authors' predictions include:
+
+\begin{enumerate}
+    \item Pricing compared to Metacritic scores is mostly uniform.  The gaps for
+    certain prices are almost entirely due to Steam's pricing structure.
+
+    \item Pricing compared to user recommendations is also nearly uniform.  There
+    is a small increase in recommendations for cheaper games, but it is not
+    significant.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Future Work}
+
+Given a larger timespan to collect data and more sophisticated web crawlers,
+more data come be pulled from Steam.  This would allow for most, if not all of
+the caveats mentioned before to be removed.  With historical data, price
+trends for games of different genres could be predicted along with the time
+frames for price drops.  A divided recommendation statistic could be used to
+determine if certain genres get more positive reviews than others, as well as
+show a correlation (or lack thereof) between Metacritic scores and positive
+recommendations.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Conclusion}
+
+After finding a suitable platform to mine data from, the authors acquired raw
+data from Steam.  This data was cleaned, formatted, and processed to find
+several interesting results.  While all of the authors' predictions were not
+proven in testing, the ones that were wrong proved to be the most surprising.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\nocite{*}                                 % ensure we show the entire bib
+\printbibliography
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\end{document}
