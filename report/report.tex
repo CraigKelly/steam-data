@@ -70,7 +70,7 @@ project, hereby called the Steam dataset. \cite{steam}
 This dataset and analysis project was inspired by the SteamDB project
 \cite{steamdb}. SteamDB does not provide data for download, and does not
 provide an API. SteamDB uses the SteamKit2 library \cite{steamkit} for
-acessing the Steam API \cite{steamdb-faq}. This does not appear to unusual;
+accessing the Steam API \cite{steamdb-faq}. This does not appear to unusual;
 for instance the site Rhekua \cite{rhekua} makes no data available either.
 
 Unlike SteamDB and other services, one service will data available for
@@ -145,7 +145,7 @@ created. This stage is described in section \ref{data-clean}.
 
 The ``raw'' detail data in ``games.json'' includes the response for every ID
 found and saved in ``idlist.csv'' (see section \ref{data-grab}). The ID list
-retrieved from Steam appears to be exahaustive. Some ID's never receive a
+retrieved from Steam appears to be exhaustive. Some ID's never receive a
 valid detail record; it is assumed that this is because the record is deleted.
 In addition, many of the record are not for video games, so only records with
 a type of ``game'' are retained.
@@ -370,11 +370,11 @@ Specifically, many of the numeric fields were examined for interesting distribut
 and correlations. Figure \ref{fig:numeric-explorations} shows four of these variables.
 
 As can be seen from the figure, it appears that there is a strong correlation
-between Recommendtion Count and the number of Players that a video game has.
+between Recommendation Count and the number of Players that a video game has.
 Although not an altogether surprising conclusion, it is not an obvious one.
 While more players indicates more potential opportunities for recommendations,
 the player numbers include people who were given a ``free weekend'' to play
-the game \cite{steamspy}. In addition, it seems intutive that engagement
+the game \cite{steamspy}. In addition, it seems intuitive that engagement
 across Steam games would vary widely; perhaps too widely for such a strong
 correlation.
 
@@ -385,14 +385,14 @@ these variable had some fairly significant outliers, so an upper bound of the
 variables that at or below the 90th percentile for both variables was used to
 examine the distributions as shown in figure \ref{fig:players-recommendations-dists}.
 
-Both variables appear to havbe similar shapes (a ``long-tailed''
+Both variables appear to have similar shapes (a ``long-tailed''
 distribution). They also appear to have fairly smooth distributions. It would
 appear that the potential correlation might be correct. However, as can be
 seen in the joint distribution graph in figure \ref{fig:players-recommendations-jointwithreg},
 there is not much of a relationship. A Pearson's R of 0.26
 (regardless of the small p-value) does not indicate a very strong
 relationship. Nonetheless, the regression line and error bounds do seem to
-indicate that there might be a potentional relationship for games with less
+indicate that there might be a potential relationship for games with less
 than 10000 players.
 
 \begin{figure*}[h]
