@@ -342,7 +342,14 @@ uniform. There is a small increase in recommendations for cheaper games, but
 it is not significant. Please see figures
 \ref{fig:metacritic-recommendations},
 \ref{fig:metacritic-price}, and
-\ref{fig:price-recommendations}.
+\ref{fig:price-recommendations}, which show these relationships for filtered
+data ranges. The full range of data can be seen in figures
+\ref{fig:metacritic-recommendations-all},
+\ref{fig:metacritic-price-all}, and
+\ref{fig:price-recommendations-all}.
+
+% These three figures are for maximum detail - the axes has been selected to
+% show the detail we're interested in.
 
 \begin{figure}[h]
     \caption{Count of User Recommendations to Metacritic Score}
@@ -359,7 +366,7 @@ it is not significant. Please see figures
 \begin{figure}[h]
     \caption{Initial Price to Count of User Recommendations}
     \label{fig:price-recommendations}
-    \includegraphics[width=0.45\textwidth,keepaspectratio]{price-metacritic-scatter}
+    \includegraphics[width=0.45\textwidth,keepaspectratio]{price-recommendations-scatter}
 \end{figure}
 
 \subsection{Recommendations and Player Count}
@@ -393,25 +400,6 @@ there is not much of a relationship. A Pearson's R of 0.26
 relationship. Nonetheless, the regression line and error bounds do seem to
 indicate that there might be a potential relationship for games with less
 than 10000 players.
-
-\begin{figure*}[h]
-    \caption{Exploring some of the more promising numeric columns}
-    \label{fig:numeric-explorations}
-    \includegraphics[width=\textwidth,keepaspectratio]{numeric-exploration}
-\end{figure*}
-
-\begin{figure*}[h]
-    \caption{Player Count and Recommendation Count Distribution Estimates (only non-zero 90th percentile)}
-    \label{fig:players-recommendations-dists}
-    \includegraphics[width=\textwidth,keepaspectratio]{player-count-recommends-distribution}
-\end{figure*}
-
-\begin{figure*}[h]
-    \caption{Player Count and Recommendation Count Joint Distribution and Regression (only non-zero 90th percentile)}
-    \label{fig:players-recommendations-jointwithreg}
-    \includegraphics[width=\textwidth,keepaspectratio]{player-count-recommends-jointwithreg}
-\end{figure*}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -447,6 +435,46 @@ proven in testing, the ones that were wrong proved to be the most surprising.
 
 \nocite{*}                                 % ensure we show the entire bib
 \printbibliography
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Large figures to go at end of article instead of in the text
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure*}[p]
+    \caption{Count of User Recommendations to Metacritic Score}
+    \label{fig:metacritic-recommendations-all}
+    \includegraphics[width=\textwidth,keepaspectratio]{metacritic-recommendations-scatter-all}
+\end{figure*}
+
+\begin{figure*}[p]
+    \caption{Metacritic Score to Initial Price}
+    \label{fig:metacritic-price-all}
+    \includegraphics[width=\textwidth,keepaspectratio]{price-metacritic-scatter-all}
+\end{figure*}
+
+\begin{figure*}[p]
+    \caption{Initial Price to Count of User Recommendations}
+    \label{fig:price-recommendations-all}
+    \includegraphics[width=\textwidth,keepaspectratio]{price-recommendations-scatter-all}
+\end{figure*}
+
+\begin{figure*}[p]
+    \caption{Exploring some of the more promising numeric columns}
+    \label{fig:numeric-explorations}
+    \includegraphics[width=\textwidth,keepaspectratio]{numeric-exploration}
+\end{figure*}
+
+\begin{figure*}[p]
+    \caption{Player Count and Recommendation Count Distribution Estimates (only non-zero 90th percentile)}
+    \label{fig:players-recommendations-dists}
+    \includegraphics[width=\textwidth,keepaspectratio]{player-count-recommends-distribution}
+\end{figure*}
+
+\begin{figure*}[p]
+    \caption{Player Count and Recommendation Count Joint Distribution and Regression (only non-zero 90th percentile)}
+    \label{fig:players-recommendations-jointwithreg}
+    \includegraphics[width=\textwidth,keepaspectratio]{player-count-recommends-jointwithreg}
+\end{figure*}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
