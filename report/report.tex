@@ -39,9 +39,13 @@
 \maketitle
 
 \abstract{
-A raw data source was mining for data, which was cleaned and filtered into a
-usable dataset. This dataset was searched for interesting details based upon
-the authors' preconceptions. They were found.
+Te Steam video game store is a source for interesting data about video game
+use, including consumer behavior and industry sales. A single, usable data
+set is not available from the Steam Store, but there are available API's.
+These API's and other public resources were used to create a single, clean,
+flat data set for public exploration. Some initial hypotheses about what should
+be seen in the data were made and tested as part of this project. All code and
+data has been publicly available for use by others.
 }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -72,30 +76,76 @@ provide an API. SteamDB uses the SteamKit2 library \cite{steamkit} for
 acessing the Steam API \cite{steamdb-faq}. This does not appear to unusual;
 for instance the site Rhekua \cite{rhekua} makes no data available either.
 
-Although, several external sites keep track of various parts of Steam, none of
-them gathers the data already available by web crawling Steam. Of the few
-sites that record data not saved by Steam such as Rhekua \cite{rhekua}, none
-of them release snapshots of their gathered data. This lead the authors to
-manually mine data from the main Steam site.
-
-TODO: steamspy (needs update of first paragraph)
-
-TODO: some kind of graph of data process?
-
-TODO: appendix with field listing? or just a link to the repo?
+Unlike SteamDB and other services, one service will data available for
+download was found. The service ``Steam Spy'' makes their data available via
+API, and that API includes a full download \cite{steamspy}. The Steam Spy data
+is gathered via web scraping performed on a random sample of Steam user pages
+using a technique originally described by Ars Technica
+\cite{steamspy-about,steamgauge}. The technique depends on the format of Steam
+user ID's, the URL for Steam user pages, and the data shown on a user's
+profile page. This dataset was used to include owner and player counts in our
+final data set of video game features (please see section \ref{data-grab}).
 
 \subsection{Acquisition}
+
+\label{data-grab}
 
 SteamKit2 is designed for the entire API made available by Steam
 \cite{steamkit}, much of which requires a developer/partner agreement with
 Steam \cite{steam-dev}. The authors chose to use SteamKit2 as a starting point,
 but to write their own, slim data acquisition library.
 
-TODO: describe process with steam store
+The entire process of acquiring, cleaning, and formatting is automated in a
+Makefile in the ``data'' subdirectory of the public GitHub repository for this
+project \cite{our-github}. This process is shown visually in figure
+\ref{fig:data-flow}.
 
-TODO: multiple full pulls from steam and merge with steamspy
+\begin{figure}[H]
+    \label{fig:data-flow}
+    \caption{Data flow used to produce the final data set}
+    \includegraphics[width=0.45\textwidth,keepaspectratio]{data-flow}
+\end{figure}
+
+The official Steam API has a few endpoints that are usable without an official
+API key. One of them provides a list of applications ID's and titles. These
+``application'' ID's actually refer anything made available in the Steam
+store, including movies, video trailers, downloadable content, etc. This list
+is saved as a two column CSV named ``idlist.csv''.
+
+Once an ID list is obtained, the bulk of the data retrieval process can begin.
+The script ``games.py'' was written to get the details of each ID one at a
+time from the Steam Store API. Each response is saved in it's original JSON
+form as a line in the file ``games.json''.
+
+At one time bulk retrieval was allowed, but that is no longer the case so one
+request must be made per ID. In addition, the Steam Store throttles requests
+to around 200 queries per five minutes according to online sources. This limit
+is honored by pausing for five minutes and ten seconds every 150 requests.
+Even so, occasionally the Steam Store would stop accepting requests from the
+IP address used by the script. As a result, the script was updated to handle
+repeated execution. When running, all ID's already in the output file are
+skipped.
+
+New games are constantly added to Steam. In addition, the detail data
+retrieved is constantly changing as users play games, vendors alter prices,
+etc. In an attempt to get the most and best data, the retry logic above was
+used to check and retrieve all current data from Steam on two occasions after
+the initial data gathering was complete. Because the code is publicly
+available, this same process could be used in the future to keep the data
+``fresh''.
+
+An additional file of details per Steam ID is downloaded from Steam Spy using
+the ``wget'' command line tool. Around 13 numeric fields are provide for Steam
+ID's in a single, huge JSON record.
+
+The final stage of execution is the script ``game-features.py'', which creates
+the final data set in ``game-features.csv'' using the data files already
+created. This stage is described in section \ref{data-clean}.
+
 
 \subsection{Cleaning and Formatting}
+
+\label{data-clean}
 
 TODO: reduced to 78 fields
 TODO: explain field removal
@@ -277,6 +327,8 @@ several interesting results. While all of the authors' predictions were not
 proven in testing, the ones that were wrong proved to be the most surprising.
 
 TODO: more text
+
+TODO: appendix with field listing? or just a link to the repo?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography
