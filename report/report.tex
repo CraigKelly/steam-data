@@ -98,8 +98,8 @@ project \cite{our-github}. This process is shown visually in figure
 \ref{fig:data-flow}.
 
 \begin{figure}[H]
-    \label{fig:data-flow}
     \caption{Data flow used to produce the final data set}
+    \label{fig:data-flow}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{data-flow}
 \end{figure}
 
@@ -301,15 +301,15 @@ genre received the most feedback via recommendations (see figure
 have negative reviews; in fact, the plurality of reviews for free games might
 well be negative.
 
-\begin{figure}[H]
-    \label{fig:freevnon-ratings}
+\begin{figure}[h]
     \caption{Count of recommendations from users on Free vs Non-Free games}
+    \label{fig:freevnon-ratings}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{freevnon-ratings-bar}
 \end{figure}
 
-\begin{figure}[H]
-    \label{fig:freevnon-metacritic}
+\begin{figure}[h]
     \caption{Metacritic mean score on Free vs Non-Free games}
+    \label{fig:freevnon-metacritic}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{freevnon-metacritic-bar}
 \end{figure}
 
@@ -321,15 +321,15 @@ recommended genre was non-game software (see figure \ref{fig:genre-ratings}).
 The highest scoring genre was sports instead of action. The lowest
 scoring genre was free to play (see figure \ref{fig:genre-metacritic}).
 
-\begin{figure}[H]
-    \label{fig:genre-ratings}
+\begin{figure}[h]
     \caption{Count of recommendations from users by genre}
+    \label{fig:genre-ratings}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{genre-ratings-bar}
 \end{figure}
 
-\begin{figure}[H]
-    \label{fig:genre-metacritic}
+\begin{figure}[h]
     \caption{Metacritic mean score by genre}
+    \label{fig:genre-metacritic}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{genre-metacritic-bar}
 \end{figure}
 
@@ -345,21 +345,21 @@ it is not significant. Please see figures
 \ref{fig:metacritic-price}, and
 \ref{fig:price-recommendations}.
 
-\begin{figure}[H]
+\begin{figure}[h]
+    \caption{Count of User Recommendations to Metacritic Score}
     \label{fig:metacritic-recommendations}
-    \caption{Relationship of Count of User Recommendations to Metacritic Score}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{metacritic-recommendations-scatter}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h]
+    \caption{Metacritic Score to Initial Price}
     \label{fig:metacritic-price}
-    \caption{Relationship of Metacritic Score to Initial Price}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{price-metacritic-scatter}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h]
+    \caption{Initial Price to Count of User Recommendations}
     \label{fig:price-recommendations}
-    \caption{Relationship of Initial Price to Count of User Recommendations}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{price-metacritic-scatter}
 \end{figure}
 
@@ -368,12 +368,6 @@ it is not significant. Please see figures
 In addition to the predictions made, some exploratory data analysis was performed.
 Specifically, many of the numeric fields were examined for interesting distributions
 and correlations. Figure \ref{fig:numeric-explorations} shows four of these variables.
-
-\begin{figure*}[h]
-    \label{fig:numeric-explorations}
-    \caption{Exploring some of the more promising numeric columns}
-    \includegraphics[width=\textwidth,keepaspectratio]{numeric-exploration}
-\end{figure*}
 
 As can be seen from the figure, it appears that there is a strong correlation
 between Recommendtion Count and the number of Players that a video game has.
@@ -389,28 +383,33 @@ valid data for both variables were examined. In addition, it appeared that
 these variable had some fairly significant outliers, so an upper bound of the
 90th percentile was used. The subset of games with non-zero values for both
 variables that at or below the 90th percentile for both variables was used to
-examine the distributions as shown in figure \ref{players-recommendations-
-dists}.
-
-\begin{figure*}[h]
-    \label{fig:players-recommendations-dists}
-    \caption{Player Count and Recommendation Count Distribution Estimates (only non-zero 90th percentile)}
-    \includegraphics[width=\textwidth,keepaspectratio]{player-count-recommends-distribution}
-\end{figure*}
+examine the distributions as shown in figure \ref{fig:players-recommendations-dists}.
 
 Both variables appear to havbe similar shapes (a ``long-tailed''
 distribution). They also appear to have fairly smooth distributions. It would
 appear that the potential correlation might be correct. However, as can be
-seen in the joint distribution graph in figure \ref{players-recommendations-
-jointwithreg}, there is not much of a relationship. A Pearson's R of 0.26
+seen in the joint distribution graph in figure \ref{fig:players-recommendations-jointwithreg},
+there is not much of a relationship. A Pearson's R of 0.26
 (regardless of the small p-value) does not indicate a very strong
 relationship. Nonetheless, the regression line and error bounds do seem to
 indicate that there might be a potentional relationship for games with less
 than 10000 players.
 
-\begin{figure}[H]
-    \label{fig:players-recommendations-jointwithreg}
+\begin{figure*}[h]
+    \caption{Exploring some of the more promising numeric columns}
+    \label{fig:numeric-explorations}
+    \includegraphics[width=\textwidth,keepaspectratio]{numeric-exploration}
+\end{figure*}
+
+\begin{figure*}[h]
+    \caption{Player Count and Recommendation Count Distribution Estimates (only non-zero 90th percentile)}
+    \label{fig:players-recommendations-dists}
+    \includegraphics[width=\textwidth,keepaspectratio]{player-count-recommends-distribution}
+\end{figure*}
+
+\begin{figure}[h]
     \caption{Player Count and Recommendation Count Joint Distribution and Regression (only non-zero 90th percentile)}
+    \label{fig:players-recommendations-jointwithreg}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{player-count-recommends-jointwithreg}
 \end{figure}
 
