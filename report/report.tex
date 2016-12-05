@@ -3,7 +3,6 @@
 \usepackage[backend=bibtex,style=numeric,citestyle=numeric]{biblatex}
 \bibliography{report}
 
-
 \usepackage{fullpage}
 
 \usepackage{amsmath}
@@ -11,8 +10,6 @@
 \usepackage{amsthm}
 \usepackage{enumerate}
 \usepackage{listings}
-\usepackage{algpseudocode}
-\usepackage{changepage}  %%for adjustwidth macro
 \usepackage{verbatim}
 \usepackage{float}
 \usepackage{graphicx}
@@ -142,13 +139,84 @@ The final stage of execution is the script ``game-features.py'', which creates
 the final data set in ``game-features.csv'' using the data files already
 created. This stage is described in section \ref{data-clean}.
 
-
 \subsection{Cleaning and Formatting}
 
 \label{data-clean}
 
-TODO: reduced to 78 fields
-TODO: explain field removal
+The ``raw'' detail data in ``games.json'' includes the response for every ID
+found and saved in ``idlist.csv'' (see section \ref{data-grab}). The ID list
+retrieved from Steam appears to be exahaustive. Some ID's never receive a
+valid detail record; it is assumed that this is because the record is deleted.
+In addition, many of the record are not for video games, so only records with
+a type of ``game'' are retained.
+
+The remaining JSON records are transformed in ``flat'' CSV records. Four
+columns from the Steam Spy data are added by joining on the App ID. The
+resulting records are written to the flat file ``games-features.csv''.
+
+The final file has 78 columns. There are five distinct ``data types'' that
+were used for the columns based on the data displayed:
+
+\begin{enumerate}
+    \item Text --- string value, sanitized for processing. Described further in
+    section \ref{data-strings}
+    \item TextualCount --- the number of unique, non-empty strings in the original list
+    \item Integer --- integral value, missing values are 0
+    \item Float --- floating point value, missing values are 0.0
+    \item Boolean --- field has one of two literal values: True or False
+\end{enumerate}
+
+A complete of list of columns, their types, and a brief description is
+available in the file ``columns.md'' in the public GitHub repository
+\cite{our-columns}.
+
+\subsection{String Processing}
+
+\label{data-strings}
+
+Some of the data available for a video game (including the system requirements
+for various platforms) is in unstructured text fields. Where feasible, this data
+was included in the final CSV data set. However, the text was often hard to use
+for practical work. For instance, the system requirements often included HTML
+markup for display.
+
+As a result, some non-trivial string processing was used to insure easy reading
+of the string data in the final data set. If access to the original, unchanged
+text is ever required, it is present in the original ``games.json'' file created
+as part of the data download process.
+
+Some notes:
+
+\begin{itemize}
+    \item String comparisons were done on versions of the string converted to
+    lowercase with all leading and trailing whitespace removed.
+    \item The JSON data is retrieved in UTF-8, so all textual data begins in
+    UTF-8 before any processing takes place.
+\end{itemize}
+
+The full text processing process is:
+
+\begin{enumerate}
+    \item Unicode sequences that are not in ASCII are transliterated via the
+    library ``unidecode'' \cite{unidecode}
+
+    \item Any HTML entities (e.g. \&gt; or \&quot;) are unescaped using the Python
+    standard library (``html.unescape'').
+
+    \item The HTML tag stripping routine from above is re-run to strip out any
+    HTML tags introduced via the unescaping.
+
+    \item Comma's, single-quotes, double-quotes, tabs, and line break characters are
+    all removed from the string.
+
+    \item All leading and trailing whitespace is stripped
+
+    \item If the final string is empty, a default value is returned. Currently the
+    default value is a single space, which insures that libraries like ``pandas''
+    treat the field as text when the CSV is loaded (instead of assuming a missing
+    numeric value).
+\end{enumerate}
+
 
 \subsection{Metacritic}
 
@@ -180,8 +248,6 @@ the authors from gaining interesting insight from the data.
 
 As both authors were familiar with Steam before the start of the project, they
 made some predictions of what would be found in the data:
-
-TODO: more predictions
 
 \begin{enumerate}
     \item SteamOS games available on Steam would be a perfect match to Linux
@@ -217,16 +283,12 @@ raw data. From here other options were tried.
 The authors found results corresponding to all predictions. Some other interesting
 results were found as a result of exploratory analysis.
 
-TOOD: craig's analysis
-
 \subsection{SteamOS and Linux}
 
 As a sanity check, the authors insure that a simple prediction was verifiable
 by the dataset. By definition, all Steam games available on the Linux platform
 must also be on the SteamOS platform because SteamOS is only way to run a Steam
 game on Linux. The data verified this ``prediction''.
-
-TODO: figure for SteamOS and Linux
 
 \subsection{Free vs Non-Free Games}
 
@@ -237,7 +299,7 @@ genre received the most feedback via recommendations (see figure
 \ref{fig:genre-ratings}), but had the lowest rating scores (see figure
 \ref{fig:genre-metacritic}). As a result, we conclude that free games tend to
 have negative reviews; in fact, the plurality of reviews for free games might
-well be negative. (TODO: last sentence in ``Future Work''.)
+well be negative.
 
 \begin{figure}[H]
     \label{fig:freevnon-ratings}
@@ -301,20 +363,75 @@ it is not significant. Please see figures
     \includegraphics[width=0.45\textwidth,keepaspectratio]{price-metacritic-scatter}
 \end{figure}
 
+\subsection{Recommendations and Player Count}
+
+In addition to the predictions made, some exploratory data analysis was performed.
+Specifically, many of the numeric fields were examined for interesting distributions
+and correlations. Figure \ref{fig:numeric-explorations} shows four of these variables.
+
+\begin{figure*}[h]
+    \label{fig:numeric-explorations}
+    \caption{Exploring some of the more promising numeric columns}
+    \includegraphics[width=\textwidth,keepaspectratio]{numeric-exploration}
+\end{figure*}
+
+As can be seen from the figure, it appears that there is a strong correlation
+between Recommendtion Count and the number of Players that a video game has.
+Although not an altogether surprising conclusion, it is not an obvious one.
+While more players indicates more potential opportunities for recommendations,
+the player numbers include people who were given a ``free weekend'' to play
+the game \cite{steamspy}. In addition, it seems intutive that engagement
+across Steam games would vary widely; perhaps too widely for such a strong
+correlation.
+
+To examine this relationship, it was necessary to insure that only games with
+valid data for both variables were examined. In addition, it appeared that
+these variable had some fairly significant outliers, so an upper bound of the
+90th percentile was used. The subset of games with non-zero values for both
+variables that at or below the 90th percentile for both variables was used to
+examine the distributions as shown in figure \ref{players-recommendations-
+dists}.
+
+\begin{figure*}[h]
+    \label{fig:players-recommendations-dists}
+    \caption{Player Count and Recommendation Count Distribution Estimates (only non-zero 90th percentile)}
+    \includegraphics[width=\textwidth,keepaspectratio]{player-count-recommends-distribution}
+\end{figure*}
+
+Both variables appear to havbe similar shapes (a ``long-tailed''
+distribution). They also appear to have fairly smooth distributions. It would
+appear that the potential correlation might be correct. However, as can be
+seen in the joint distribution graph in figure \ref{players-recommendations-
+jointwithreg}, there is not much of a relationship. A Pearson's R of 0.26
+(regardless of the small p-value) does not indicate a very strong
+relationship. Nonetheless, the regression line and error bounds do seem to
+indicate that there might be a potentional relationship for games with less
+than 10000 players.
+
+\begin{figure}[H]
+    \label{fig:players-recommendations-jointwithreg}
+    \caption{Player Count and Recommendation Count Joint Distribution and Regression (only non-zero 90th percentile)}
+    \includegraphics[width=0.45\textwidth,keepaspectratio]{player-count-recommends-jointwithreg}
+\end{figure}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Future Work}
 
-Given a larger timespan to collect data and more sophisticated web crawlers,
-more data come be pulled from Steam. This would allow for most, if not all of
-the caveats mentioned before to be removed. With historical data, price
-trends for games of different genres could be predicted along with the time
-frames for price drops. A divided recommendation statistic could be used to
-determine if certain genres get more positive reviews than others, as well as
-show a correlation (or lack thereof) between Metacritic scores and positive
+The current data collection technique provides a single snapshot in time of
+Steam game data. Multiple snapshots collected over time could be used to to
+analyze changing trends, especially variables like price and number of
+players. In addition, a more fine-grained approach to recommendations could be
+used to determine if certain genres get more positive reviews than others. The
+same analysis could be performed on Metacritic scores and positive
 recommendations.
+
+There is also a great deal of potential in the unstructured text data gathered.
+If nothing else, it represents thousands of descriptions of system requirements
+that could be used various natural language processing tasks. In particular, it
+could serve as a specialized corpus.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -325,10 +442,6 @@ After finding a suitable platform to mine data from, the authors acquired raw
 data from Steam. This data was cleaned, formatted, and processed to find
 several interesting results. While all of the authors' predictions were not
 proven in testing, the ones that were wrong proved to be the most surprising.
-
-TODO: more text
-
-TODO: appendix with field listing? or just a link to the repo?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Bibliography
