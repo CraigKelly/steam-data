@@ -59,7 +59,7 @@ largest digital distributor of games and the most widely used. Additionally,
 Steam stores metrics on over a 100 million users on nearly 10,000 games,
 making it a perfect example of a feature rich dataset. However, as Steam has
 no saved repository of data publicly available, one was created for this
-project, hereby called the Steam dataset. \cite{steam}
+project, hereby called the Steam dataset~\cite{steam}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,37 +69,36 @@ project, hereby called the Steam dataset. \cite{steam}
 
 This dataset and analysis project was inspired by the SteamDB project
 \cite{steamdb}. SteamDB does not provide data for download, and does not
-provide an API. SteamDB uses the SteamKit2 library for accessing the Steam
-API \cite{steamkit,steamdb-faq}. This does not appear to be unusual;
-for instance the site Rhekua \cite{rhekua} makes no data available either.
+provide an API\@. SteamDB uses the SteamKit2 library for accessing the Steam
+API~\cite{steamkit,steamdb-faq}. This does not appear to be unusual;
+for instance the site Rhekua~\cite{rhekua} makes no data available either.
 
 Unlike SteamDB and other services, one service with data available for
 download was found. The service ``Steam Spy'' makes their data available via
-API, and that API includes a full download \cite{steamspy}. The Steam Spy data
+API, and that API includes a full download~\cite{steamspy}. The Steam Spy data
 is gathered via web scraping performed on a random sample of Steam user pages
 using a technique originally described by Ars Technica
 \cite{steamspy-about,steamgauge}. The technique depends on the format of Steam
 user IDs, the URL for Steam user pages, and the data shown on a user's
 profile page. This dataset was used to include owner and player counts in our
-final data set of video game features (please see section \ref{data-grab}).
+final data set of video game features (please see section~\ref{data-grab}).
 
 \subsection{Acquisition}
 
 \label{data-grab}
 
 SteamKit2 is designed for the entire API made available by Steam
-much of which requires a developer/partner agreement with Steam
-\cite{steamkit,steam-dev}. The authors chose to use SteamKit2 as a starting point,
-but to write their own, slim data acquisition library.
+much of which requires a developer/partner agreement with
+Steam~\cite{steamkit,steam-dev}. The authors chose to use SteamKit2 as a
+starting point, but to write their own, slim data acquisition library.
 
 The entire process of acquiring, cleaning, and formatting is automated in a
 Makefile in the ``data'' subdirectory of the public GitHub repository for this
-project \cite{our-github}. This process is shown visually in figure
+project~\cite{our-github}. This process is shown visually in figure
 \ref{fig:data-flow}.
 
 \begin{figure}[H]
-    \caption{Data flow used to produce the final data set}
-    \label{fig:data-flow}
+    \caption{Data flow used to produce the final data set\label{fig:data-flow}}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{data-flow}
 \end{figure}
 
@@ -137,7 +136,7 @@ IDs in a single, huge JSON record.
 
 The final stage of execution is the script ``game-features.py'', which creates
 the final data set in ``game-features.csv'' using the data files already
-created. This stage is described in section \ref{data-clean}.
+created. This stage is described in section~\ref{data-clean}.
 
 \subsection{Cleaning and Formatting}
 
@@ -151,7 +150,7 @@ In addition, many of the records are not for video games, so only records with
 a type of ``game'' are retained.
 
 The remaining JSON records are transformed in ``flat'' CSV records. Four
-columns from the Steam Spy data are added by joining on the App ID. The
+columns from the Steam Spy data are added by joining on the App ID\@. The
 resulting records are written to the flat file ``games-features.csv''.
 
 The final file has 78 columns. There are five distinct ``data types'' that
@@ -159,7 +158,7 @@ were used for the columns based on the data displayed:
 
 \begin{enumerate}
     \item Text --- string value, sanitized for processing. Described further in
-    section \ref{data-strings}
+    section~\ref{data-strings}
     \item TextualCount --- the number of unique, non-empty strings in the original list
     \item Integer --- integral value, missing values are 0
     \item Float --- floating point value, missing values are 0.0
@@ -198,7 +197,7 @@ The full text processing process is:
 
 \begin{enumerate}
     \item Unicode sequences that are not in ASCII are transliterated via the
-    library ``unidecode'' \cite{unidecode}
+    library ``unidecode''~\cite{unidecode}
 
     \item Any HTML entities (e.g. \&gt; or \&quot;) are unescaped using the Python
     standard library (``html.unescape'').
@@ -222,10 +221,10 @@ The full text processing process is:
 
 While many of the data dimensions are self-explanatory, Metacritic might
 require some explanation. Metacritic provides a rating service for video
-games, movies, television shows, and music \cite{metacritic}. The Metacritic
+games, movies, television shows, and music~\cite{metacritic}. The Metacritic
 score is a proprietary weighted average of various professional critics and
-publications, scaled from 1 to 100 \cite{metacritic-score}. It is one of the
-most frequently used metrics for video game quality \cite{metacritic-vgdominant}.
+publications, scaled from 1 to 100~\cite{metacritic-score}. It is one of the
+most frequently used metrics for video game quality~\cite{metacritic-vgdominant}.
 
 
 \subsection{Caveats}
@@ -233,7 +232,7 @@ most frequently used metrics for video game quality \cite{metacritic-vgdominant}
 The process used could not capture all data dimensions used by Steam. Some are
 not recorded and others can only be accessed by an administrator account. The
 number of owners for each game could not be acquired, but has been estimated
-using an outside site \cite{steamspy}. Recommendations were collected as a
+using an outside site~\cite{steamspy}. Recommendations were collected as a
 total of reviews rather than as two separate values for positive and negative
 reviews because the API used does not provide review sentiment. Steam does not
 store historical price data, so sale history and price trends can not be
@@ -252,14 +251,14 @@ made some predictions of what would be found in the data:
     \item SteamOS games available on Steam would be a perfect match to Linux
     games available.
 
+    \item That free games get more reviews per game and have lower ratings than
+    paid games.
+
     \item The most recommended and the highest rated genre is action.
 
     \item That Metacritic scores are an inverse bell curve when sorted by
-    recommendation, i.e. lower and higher scoring games would have more
+    recommendation, i.e.\ lower and higher scoring games would have more
     recommendations that games with a middle score.
-
-    \item That free games get more reviews per game and have lower ratings than
-    paid games.
 \end{enumerate}
 
 
@@ -293,7 +292,7 @@ game on Linux. The data verified this ``prediction''.
 
 Free games do get more recommendations than paid games (see figure
 \ref{fig:freevnon-ratings}). However, they are also rated lower than paid
-games (see figure \ref{fig:freevnon-metacritic}). In fact, ``free to play'' as a
+games (see figure~\ref{fig:freevnon-metacritic}). In fact, ``free to play'' as a
 genre received the most feedback via recommendations (see figure
 \ref{fig:genre-ratings}), but had the lowest rating scores (see figure
 \ref{fig:genre-metacritic}). As a result, we conclude that free games tend to
@@ -301,14 +300,12 @@ have negative reviews; in fact, the plurality of reviews for free games might
 well be negative.
 
 \begin{figure}[h]
-    \caption{Count of recommendations from users on Free vs Non-Free games}
-    \label{fig:freevnon-ratings}
+    \caption{Count of recommendations from users on Free vs Non-Free games \label{fig:freevnon-ratings}}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{freevnon-ratings-bar}
 \end{figure}
 
 \begin{figure}[h]
-    \caption{Metacritic mean score on Free vs Non-Free games}
-    \label{fig:freevnon-metacritic}
+    \caption{Metacritic mean score on Free vs Non-Free games \label{fig:freevnon-metacritic}}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{freevnon-metacritic-bar}
 \end{figure}
 
@@ -316,19 +313,17 @@ well be negative.
 \subsection{Genre}
 
 The most recommended genre was free to play and not action. The least
-recommended genre was non-game software (see figure \ref{fig:genre-ratings}).
+recommended genre was non-game software (see figure~\ref{fig:genre-ratings}).
 The highest scoring genre was sports instead of action. The lowest
-scoring genre was free to play (see figure \ref{fig:genre-metacritic}).
+scoring genre was free to play (see figure~\ref{fig:genre-metacritic}).
 
 \begin{figure}[h]
-    \caption{Count of recommendations from users by genre}
-    \label{fig:genre-ratings}
+    \caption{Count of recommendations from users by genre \label{fig:genre-ratings}}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{genre-ratings-bar}
 \end{figure}
 
 \begin{figure}[h]
-    \caption{Metacritic mean score by genre}
-    \label{fig:genre-metacritic}
+    \caption{Metacritic mean score by genre \label{fig:genre-metacritic}}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{genre-metacritic-bar}
 \end{figure}
 
@@ -352,20 +347,17 @@ data ranges. The full range of data can be seen in figures
 % show the detail we're interested in.
 
 \begin{figure}[h]
-    \caption{Count of User Recommendations to Metacritic Score}
-    \label{fig:metacritic-recommendations}
+    \caption{Count of User Recommendations to Metacritic Score \label{fig:metacritic-recommendations}}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{metacritic-recommendations-scatter}
 \end{figure}
 
 \begin{figure}[h]
-    \caption{Metacritic Score to Initial Price}
-    \label{fig:metacritic-price}
+    \caption{Metacritic Score to Initial Price \label{fig:metacritic-price}}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{price-metacritic-scatter}
 \end{figure}
 
 \begin{figure}[h]
-    \caption{Initial Price to Count of User Recommendations}
-    \label{fig:price-recommendations}
+    \caption{Initial Price to Count of User Recommendations \label{fig:price-recommendations}}
     \includegraphics[width=0.45\textwidth,keepaspectratio]{price-recommendations-scatter}
 \end{figure}
 
@@ -373,7 +365,7 @@ data ranges. The full range of data can be seen in figures
 
 In addition to the predictions made, some exploratory data analysis was performed.
 Specifically, many of the numeric fields were examined for interesting distributions
-and correlations. Figure \ref{fig:numeric-explorations} shows four of these variables.
+and correlations. Figure~\ref{fig:numeric-explorations} shows four of these variables.
 
 As can be seen from the figure, it appears that there is a strong correlation
 between Recommendation Count and the number of Players that a video game has.
@@ -389,17 +381,33 @@ valid data for both variables were examined. In addition, it appeared that
 these variables had some fairly significant outliers, so an upper bound of the
 90th percentile was used. The subset of games with non-zero values for both
 variables that were at or below the 90th percentile for both variables was used to
-examine the distributions as shown in figure \ref{fig:players-recommendations-dists}.
+examine the distributions as shown in figure~\ref{fig:players-recommendations-dists}.
 
 Both variables appear to have similar shapes (a ``long-tailed''
 distribution). They also appear to have fairly smooth distributions. It would
 appear that the potential correlation might be correct. However, as can be
-seen in the joint distribution graph in figure \ref{fig:players-recommendations-jointwithreg},
+seen in the joint distribution graph in figure~\ref{fig:players-recommendations-jointwithreg},
 there is not much of a relationship. A Pearson's R of 0.26
 (regardless of the small p-value) does not indicate a very strong
 relationship. Nonetheless, the regression line and error bounds do seem to
 indicate that there might be a potential relationship for games with less
 than 10000 players.
+
+\subsection{Required Specifications}
+
+Of the features found in the Steam database, there are 6 relating to the
+minimum and suggested requirements to run a game sorted by OS. These fields
+typically include: OS, processor, memory, graphics, storage, and additional
+notes, all written in full text. As these fields are newer features in Steam,
+many games do not have data in them. Of the subset of games with non-empty
+fields: less than 1\% have Linux requirements, roughly 10.5\% have Mac
+requirements, and 100\% have Windows requirements. However, only 23\% have both
+minimum and suggested fields. Additionally, nearly 17\% of these entries for
+Windows have missing or incorrect fields. After sorting these fields into
+similar groupings, the only interesting patterns found were that the minimum
+required specifications to play a game increased nearly uniformly with the
+passage of time, i.e.\ newer games had higher requirements.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -422,6 +430,33 @@ could serve as a specialized corpus.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\section{Breakdown of Work Involved}
+
+\subsection{Craig}
+
+\begin{itemize}
+    \item Editing of APIs
+    \item Gathering of data
+    \item Cleaning and formatting of data
+    \item Analysis of data
+    \item Writing of paper
+    \item Manipulation of Latex and included figures
+\end{itemize}
+
+\subsection{Eric}
+
+\begin{itemize}
+    \item Determining of project type and scope
+    \item Finding of main API
+    \item Hypothesis construction
+    \item Analysis of data
+    \item Writing of paper
+    \item Editing of paper
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \section{Conclusion}
 
 After finding a suitable platform to mine data from, the authors acquired raw
@@ -433,7 +468,9 @@ proven in testing, the ones that were wrong proved to be the most surprising.
 % Bibliography
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\nocite{*}                                 % ensure we show the entire bib
+% ensure we show the entire bib
+\nocite{*}
+
 \printbibliography
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -441,38 +478,32 @@ proven in testing, the ones that were wrong proved to be the most surprising.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \begin{figure*}[p]
-    \caption{Count of User Recommendations to Metacritic Score}
-    \label{fig:metacritic-recommendations-all}
+    \caption{Count of User Recommendations to Metacritic Score \label{fig:metacritic-recommendations-all}}
     \includegraphics[width=\textwidth,keepaspectratio]{metacritic-recommendations-scatter-all}
 \end{figure*}
 
 \begin{figure*}[p]
-    \caption{Metacritic Score to Initial Price}
-    \label{fig:metacritic-price-all}
+    \caption{Metacritic Score to Initial Price \label{fig:metacritic-price-all}}
     \includegraphics[width=\textwidth,keepaspectratio]{price-metacritic-scatter-all}
 \end{figure*}
 
 \begin{figure*}[p]
-    \caption{Initial Price to Count of User Recommendations}
-    \label{fig:price-recommendations-all}
+    \caption{Initial Price to Count of User Recommendations \label{fig:price-recommendations-all}}
     \includegraphics[width=\textwidth,keepaspectratio]{price-recommendations-scatter-all}
 \end{figure*}
 
 \begin{figure*}[p]
-    \caption{Exploring some of the more promising numeric columns}
-    \label{fig:numeric-explorations}
+    \caption{Exploring some of the more promising numeric columns \label{fig:numeric-explorations}}
     \includegraphics[width=\textwidth,keepaspectratio]{numeric-exploration}
 \end{figure*}
 
 \begin{figure*}[p]
-    \caption{Player Count and Recommendation Count Distribution Estimates (only non-zero 90th percentile)}
-    \label{fig:players-recommendations-dists}
+    \caption{Player Count and Recommendation Count Distribution Estimates (only non-zero 90th percentile) \label{fig:players-recommendations-dists}}
     \includegraphics[width=\textwidth,keepaspectratio]{player-count-recommends-distribution}
 \end{figure*}
 
 \begin{figure*}[p]
-    \caption{Player Count and Recommendation Count Joint Distribution and Regression (only non-zero 90th percentile)}
-    \label{fig:players-recommendations-jointwithreg}
+    \caption{Player Count and Recommendation Count Joint Distribution and Regression (only non-zero 90th percentile) \label{fig:players-recommendations-jointwithreg}}
     \includegraphics[width=\textwidth,keepaspectratio]{player-count-recommends-jointwithreg}
 \end{figure*}
 
