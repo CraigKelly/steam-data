@@ -1,7 +1,12 @@
 \documentclass[letterpaper,10pt,twocolumn]{article}
 
 \usepackage[backend=bibtex,style=numeric,citestyle=numeric]{biblatex}
-\bibliography{report}
+\addbibresource{report.bib}
+
+% biblatex fix
+\makeatletter
+\def\blx@maxline{77}
+\makeatother
 
 \usepackage{fullpage}
 
