@@ -1,0 +1,102 @@
+"""Data gather process."""
+
+# pylama:ignore=D103,E305,E501
+
+import os
+
+from SCons.Script import (Environment, GetOption, AddOption)
+
+
+# Command line parameter to unlock Steam API querying
+AddOption(
+    '--getgames',
+    dest='getgames',
+    action='store_true',
+    default=False,
+    help='Actually query Steam API'
+)
+
+
+# Default build environment
+env = Environment(
+    ENV=os.environ,
+    TARFLAGS='-z -v -c'
+)
+env.Decider('MD5-timestamp')  # Only use MD5 if timestamp changed
+
+
+# We use a special environment for targets that only get built if the file
+# does not exist.
+def changed_if_missing(dependency, target, prev_ni):
+    return not target.exists()
+env_exists = env.Clone()
+env_exists.Decider(changed_if_missing)
+
+
+############################################################################
+# Environment setup
+
+setup = env_exists.Command(
+    'venv/bin/activate',
+    None,
+    './setup'
+)
+
+
+############################################################################
+# Steam spy file download
+
+steamspy = env_exists.Command(
+    'steamspy.json',
+    None,
+    "wget 'http://steamspy.com/api.php?request=all' -O $TARGET"
+)
+env_exists.Requires(steamspy, setup)
+
+
+############################################################################
+# ID list retrieval
+
+idlist = env_exists.Command(
+    'idlist.csv',
+    'idlist.py',
+    './pytool idlist.py'
+)
+env_exists.Requires(idlist, setup)
+
+
+############################################################################
+# Game detail fetching (if --getgames specified). Note that our logic is
+# restartable (because it has to be)
+
+if GetOption('getgames'):
+    games_cmd = ['echo "Will actually query Steam"', './pytool games.py']
+else:
+    games_cmd = ['touch $TARGET', 'echo "Use --getgames switch to actually retrieve games"']
+games = env_exists.Command(
+    'games.json',
+    ['idlist.csv', 'games.py'],
+    games_cmd
+)
+env_exists.Precious(games)  # don't delete on rebuild - games.py does partial update
+env_exists.Requires(games, [setup, idlist])
+
+
+############################################################################
+# Final CSV processing
+
+csv = env.Command(
+    'games-features.csv',
+    ['games-features.py', 'idlist.csv', 'games.json', 'steamspy.json'],
+    './pytool games-features.py'
+)
+env.Requires(csv, [setup, idlist, games, steamspy])
+
+
+############################################################################
+# Data tarball creation
+
+tarball = env.Tar(
+    'steam-data.tar.gz',
+    ['idlist.csv', 'games.json', 'steamspy.json', 'games-features.csv']
+)
