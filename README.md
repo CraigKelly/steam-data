@@ -2,14 +2,24 @@
 
 A simple data project for Steam data.
 
-See `./data` for initial data setup. It includes environment setup and a
-Makefile-driven data retrieval, clean, merge, and conversion pipeline. You
-can also download the finished data from
+If you want the entire data set, including all files generated in the process of
+creating the final file, then you can download it
 [here](https://s3.amazonaws.com/public-service/steam-data.tar.gz).
 
-See `./analysis` for some Jupyter notebooks examining the data.
+If you are only interested in the final data set, we have made it available on
+[data.world](https://data.world/craigkelly/steam-game-data)
 
-See `./report` for a brief report on work with this dataset.
+The subdirectory `./data` is a Makefile driven pipeline for retrieving and
+cleaning all data. You'll need make and Python3.
+
+## Other Goodies
+
+See `./analysis` for some simple, example Jupyter notebooks examining the
+data. You'll need Jupyter and the usual Python data analysis tools. Using the
+jupyter Docker image `jupyter/datascience-notebook` should be sufficient.
+
+See `./report` for a brief report on work with this dataset. The report is
+in LaTeX and uses make+rubber to build the final PDF.
 
 ## Licensing
 

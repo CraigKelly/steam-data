@@ -43,7 +43,7 @@ clean:
 tarball: $(TARBALL)
 $(TARBALL): $(IDLIST) $(GAMEJSON) $(FEATURECSV) $(STEAMSPY)
 	rm -f $(TARBALL)
-	tar -zvcf $(TARBALL) $(IDLIST) $(GAMEJSON) $(FEATURECSV) $(STEAMSPY)
+	tar -zvcf $(TARBALL) $(IDLIST) $(GAMEJSON) $(FEATURECSV) $(STEAMSPY) columns.md
 	@echo "Tarball created - you should put it somewhere"
 
 .PHONY: clean setup idlist games csv steamspy tarball
